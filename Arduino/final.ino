@@ -54,14 +54,20 @@ void setup()
 void loop() {
   sensors.requestTemperatures();
   soil_temp_float = sensors.getTempCByIndex(0);
-  temp_string = floatToString(soil_temp_float);
 
   atm_hum = dht.readHumidity();
-  hum_string = floatToString(atm_hum);
   atm_temp = dht.readTemperature();
-  airtemp_string = floatToString(atm_temp);
 
   soil_mois = analogRead(A1);
+
+  if (soil_temp_float <= 0 || atm_hum <= 0 || atm_temp <= 0 || soil_mois <= 0)
+  {
+    return;
+  }
+
+  temp_string = floatToString(soil_temp_float);
+  hum_string = floatToString(atm_hum);
+  airtemp_string = floatToString(atm_temp);
   soilmois_string = String(soil_mois);
 
   data_string = ( temp_string + soilmois_string + airtemp_string + hum_string );
@@ -75,5 +81,5 @@ void loop() {
   Serial.println("Packet sent");
   LoRa.endPacket();
 
-  delay(2000);
+  delay(60000);
 }
