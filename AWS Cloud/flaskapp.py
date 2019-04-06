@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 import sqlite3
 import datetime
 from flask import Flask
-
+import requests
 
 
 
@@ -37,7 +37,7 @@ app.layout = html.Div(style={'backgroundColor': '#7CFC00'},children=[
         }),
         dcc.Graph(id='live-update-graph'),
         dcc.Interval(
-                    id='interval-component',
+            id='interval-component',
             interval=1*3000, # in milliseconds
             n_intervals=3000
         )
@@ -48,6 +48,7 @@ app.layout = html.Div(style={'backgroundColor': '#7CFC00'},children=[
               [Input('interval-component', 'n_intervals')])
 
 def update_graph_live(n_intervals):
+
 
     conn = sqlite3.connect('/home/ubuntu/flaskapp/agristick.db',check_same_thread=False)
     conn.execute('pragma journal_mode=wal;')
@@ -76,7 +77,6 @@ def update_graph_live(n_intervals):
     dt5 = datetime.datetime.strptime(dts5,'%Y-%m-%d %H:%M:%S.%f')
     dt6 = datetime.datetime.strptime(dts6,'%Y-%m-%d %H:%M:%S.%f')
     dt7 = datetime.datetime.strptime(dts7,'%Y-%m-%d %H:%M:%S.%f')
-    dt8 = datetime.datetime.strptime(dts8,'%Y-%m-%d %H:%M:%S.%f')
     dt8 = datetime.datetime.strptime(dts8,'%Y-%m-%d %H:%M:%S.%f')
     dt9 = datetime.datetime.strptime(dts9,'%Y-%m-%d %H:%M:%S.%f')
 
@@ -125,9 +125,18 @@ def update_graph_live(n_intervals):
     air_hum8 = data[1][5]
     air_hum9 = data[0][5]
 
+#==================================================================
+
+    #if soil_moist9 > 600:
+     #   getstring1 = "https://api.telegram.org/bot887962242:AAHVDZOmRhGFq1RG0iXlLCktdBiLEayrVVI/sendMessage?chat_id=297609926&text=Your+field+needs+to+be+irrigated.+Y$
+      #  requests.get(getstring1)
+
+    #if soil_moist9 < 600 :
+     #   getstring2 = "https://api.telegram.org/bot887962242:AAHVDZOmRhGFq1RG0iXlLCktdBiLEayrVVI/sendMessage?chat_id=297609926&text=Your+field+got+irrigated.+Your+soil$
+      #  requests.get(getstring2)
+
 
 #===================================================================
-
     fig = plotly.tools.make_subplots(rows=2, cols=2,subplot_titles= ('Soil Temperature','Soil Moisture','Air Temperature','Air Humidity'), vertical_spacing=0.2)
     fig['layout']['margin'] = {
          'l':30 , 'r': 10, 'b': 20, 't': 20
@@ -166,11 +175,10 @@ def update_graph_live(n_intervals):
         'mode': 'lines+markers',
         'type': 'scatter'
     }, 2, 2)
-
-    fig['layout']['yaxis1'].update(range=[25,35])
+    fig['layout']['yaxis1'].update(range=[28,34])
     fig['layout']['yaxis2'].update(range=[400,800])
-    fig['layout']['yaxis3'].update(range=[25,45])
-    fig['layout']['yaxis4'].update(range=[20,80])
+    fig['layout']['yaxis3'].update(range=[28,34])
+    fig['layout']['yaxis4'].update(range=[45,75])
 
 
     return fig
@@ -178,4 +186,5 @@ def update_graph_live(n_intervals):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
 
