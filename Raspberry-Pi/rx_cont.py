@@ -33,34 +33,31 @@ import paho.mqtt.publish as publish
 
 
 # SQLite DB Name
-DB_Name =  "agristick.db"
+DB_Name =  "/home/pi/FYP/agristick.db"
 
 BOARD.setup()
-
 parser = LoRaArgumentParser("Continous LoRa receiver.")
 
 #===============================================================
 # Database Manager Class
 
 class DatabaseManager():
-	def __init__(self):
-		self.conn = sqlite3.connect(DB_Name)
-		self.conn.execute('pragma foreign_keys = on')
+        def __init__(self):
+                self.conn = sqlite3.connect(DB_Name)
+                self.conn.execute('pragma foreign_keys = on')
                 #self.conn.execute('pragma journal_mode = wal;')
-		self.conn.commit()
-		self.cur = self.conn.cursor()
-		
-	def add_del_update_db_record(self, sql_query, args=()):
-		self.cur.execute(sql_query, args)
-		self.conn.commit()
-		return
+                self.conn.commit()
+                self.cur = self.conn.cursor()
 
-	def __del__(self):
-		self.cur.close()
-		self.conn.close()
+        def add_del_update_db_record(self, sql_query, args=()):
+                self.cur.execute(sql_query, args)
+                self.conn.commit()
+                return
+
+        def __del__(self):
+                self.cur.close()
 
 
-	
 
 #===============================================================
 
@@ -71,39 +68,39 @@ class LoRaRcvCont(LoRa):
         self.set_dio_mapping([0] * 6)
 
     def on_rx_done(self):
- 	BOARD.led_on()
-	#print("\nRxDone")
- 	self.clear_irq_flags(RxDone=1)
- 	payload = self.read_payload(nocheck=True)
-	payload = payload[:-1]
+        BOARD.led_on()
+        #print("\nRxDone")
+        self.clear_irq_flags(RxDone=1)
+        payload = self.read_payload(nocheck=True)
+        payload = payload[:-1]
 
-	d = datetime.datetime.now()
-	d = str(d)
-	mystring = ""
-	for char in payload:
-    		mystring = mystring + chr(char)
-	#print (mystring)
-	soil_temp = mystring[0:7]
-	soil_moist = mystring[7:10]
-	atmp_temp = mystring[10:17]
-	atmp_hum = mystring[17:24]
-	print("datetime: " + d)
-	print("Soil Temperature: " + soil_temp)
-	print("Soil Moisture: " + soil_moist)
-	print("Atmospheric Temperature: " + atmp_temp)
-	print("Atmospheric Humidity: " + atmp_hum)
+        d = datetime.datetime.now()
+        d = str(d)
+        mystring = ""
+        for char in payload:
+                mystring = mystring + chr(char)
+        #print (mystring)
+        soil_temp = mystring[0:7]
+        soil_moist = mystring[7:10]
+        atmp_temp = mystring[10:17]
+        atmp_hum = mystring[17:24]
+        print("datetime: " + d)
+        print("Soil Temperature: " + soil_temp)
+        print("Soil Moisture: " + soil_moist)
+        print("Atmospheric Temperature: " + atmp_temp)
+        print("Atmospheric Humidity: " + atmp_hum)
         stringformqtt = d+','+soil_temp+','+soil_moist+','+atmp_temp+','+atmp_hum
-        print(stringformqtt)	
-	#---------------------------------------------------------------------------------------------------------
-	
+        print(stringformqtt)
+        #---------------------------------------------------------------------------------------------------------
+
         dbObj = DatabaseManager()
-        dbObj.add_del_update_db_record("insert into sendata (date_time,soil_temp,soil_moist,atmp_temp,atmp_hum) values (?,?,?,?,?)",[d,float(soil_temp),int(soil_moist),float(atmp_temp),float(atmp_hum)])
+
+        dbObj.add_del_update_db_record("insert into sendata (date_time,soil_temp,soil_moist,atmp_temp,atmp_hum) values (?,?,?,?,?)",[d,float(soil_temp),int(soil_moist)$
         del dbObj
         print ("Inserted Data into SENSOR DATA Database.")
-        publish.single("agristick1",str(stringformqtt),hostname="13.232.96.33",auth = {'username':"ubuntu", 'password':"ceglaeee"})
-	#publish.single("agristick1", " eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", hostname="13.232.96.33",auth = {'username':"ubuntu", 'password':"ceglaeee"})
-        print("sent to cloud")
-	#---------------------------------------------------------------------------------------------------------
+       # publish.single("agristick1",str(stringformqtt),hostname="13.232.96.33",auth = {'username':"ubuntu", 'password':"ceglaeee"})
+        #print("sent to cloud")
+        #---------------------------------------------------------------------------------------------------------
         self.set_mode(MODE.SLEEP)
         self.reset_ptr_rx()
         BOARD.led_off()
