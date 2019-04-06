@@ -31,5 +31,3 @@ curs.executescript(TableSchema_SD)
 curs.close()
 conn.close()
 
-
-
