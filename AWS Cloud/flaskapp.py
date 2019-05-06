@@ -125,15 +125,6 @@ def update_graph_live(n_intervals):
     air_hum8 = data[1][5]
     air_hum9 = data[0][5]
 
-#==================================================================
-
-    #if soil_moist9 > 600:
-     #   getstring1 = "https://api.telegram.org/bot887962242:AAHVDZOmRhGFq1RG0iXlLCktdBiLEayrVVI/sendMessage?chat_id=297609926&text=Your+field+needs+to+be+irrigated.+Y$
-      #  requests.get(getstring1)
-
-    #if soil_moist9 < 600 :
-     #   getstring2 = "https://api.telegram.org/bot887962242:AAHVDZOmRhGFq1RG0iXlLCktdBiLEayrVVI/sendMessage?chat_id=297609926&text=Your+field+got+irrigated.+Your+soil$
-      #  requests.get(getstring2)
 
 
 #===================================================================
